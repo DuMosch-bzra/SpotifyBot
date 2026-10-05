@@ -63,19 +63,21 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
+    const payload = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64")
+        },
+        body: new URLSearchParams({
+            grant_type: "authorization_code",
+            code: code,
+            redirect_uri: redirectUri
+        })
+    }
+
     try {
-        const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64")
-            },
-            body: new URLSearchParams({
-                grant_type: "authorization_code",
-                code: code,
-                redirect_uri: redirectUri
-            })
-        });
+        const tokenResponse = await fetch("https://accounts.spotify.com/api/token", payload);
 
         if (!tokenResponse.ok) {
             throw new Error(`Failed to fetch token: ${tokenResponse.status} ${await tokenResponse.text()}`);
