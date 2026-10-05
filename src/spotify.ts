@@ -7,8 +7,13 @@ interface TopTracksResponse {
         name: string;
     }[];
 }
+export interface TopTrack {
+    name: string;
+    artists: string;
+    albumImageUrl: string;
+}
 
-export async function getTopTracks(accessToken: string) {
+export async function getTopTrack(accessToken: string): Promise<TopTrack> {
 
     const response = await fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1&offset=0', {
         headers: {
@@ -19,11 +24,21 @@ export async function getTopTracks(accessToken: string) {
         throw new Error(`HTTP error! status: ${response.status} ${await response.text()}`);
     }
     const data: TopTracksResponse = await response.json();
-    return data.items.map(track => ({
-        name: track.name,
-        artists: track.artists.map(artist => artist.name).join(", "),
-        albumImageUrl: track.album.images[0]?.url || ""
-    }));
+    if (data.items[0] === undefined) {
+        throw new Error("No top tracks found for the user.");
+    }
+    if (!data.items[0].album.images){
+        throw new Error("No album images found for the top track.");
+    }
+    if(!data.items[0].album.images[0]){
+        throw new Error("No album images found for the top track.");
+    }
+    const topTrack = {
+        name: data.items[0].name,
+        artists: data.items[0].artists.map(artist => artist.name).join(", "),
+        albumImageUrl: data.items[0].album.images[0].url
+    };
+    return topTrack;
 }
 
 interface TokenResponse {
@@ -39,12 +54,10 @@ export async function refreshAccessToken() {
     const clientSecret = process.env.CLIENT_SECRET;
 
     if (!refreshToken) {
-        console.error("No refresh token found. Please log in first.");
         throw new Error("No refresh token found. Please log in first.");
     }
 
     if (!clientId || !clientSecret) {
-        console.error("Missing CLIENT_ID or CLIENT_SECRET in environment variables.");
         throw new Error("Missing CLIENT_ID or CLIENT_SECRET in environment variables.");
     }
 
