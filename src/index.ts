@@ -1,11 +1,11 @@
 import { refreshAccessToken, getTopTrack, SpotifyAuthError } from "./spotify.js";
-import { deliverMessage, deliverErrorMessage, deliverSpotifyErrorMessage, DiscordWebhookError } from "./deliver.js";
+import { deliverTopTrack, deliverErrorMessage, deliverSpotifyErrorMessage, DiscordWebhookError } from "./deliver.js";
 
 async function main() {
     try {
         const newAccessToken = await refreshAccessToken();
         const topTrack = await getTopTrack(newAccessToken);
-        await deliverMessage(topTrack);
+        await deliverTopTrack(topTrack);
     } catch (error) {
         console.error("Error:", error);
         if(!(error instanceof DiscordWebhookError)){

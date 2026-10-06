@@ -1,5 +1,6 @@
 import http from "node:http";
 import { saveTokens } from "./tokenStore.js";
+import { deliverLoginLink, deliverLoginSuccessMessage } from "./deliver.js";
 
 interface TokenResponse {
   access_token: string;
@@ -94,11 +95,19 @@ const server = http.createServer(async (req, res) => {
     }
 
     res.writeHead(200).end(`Authorization code received. You can close this window.`);
+
+    deliverLoginSuccessMessage().catch(err => {
+        console.error("Failed to deliver login success message to Discord:", err);
+    });
+
     server.close(() => {
         console.log("Server closed");
     });
 });
 
 server.listen(8888, () => {
-  console.log(`Open ${authorizeUrl}`);
+    console.log(`Open ${authorizeUrl}`);
+    deliverLoginLink(authorizeUrl).catch(err => {
+        console.error("Failed to deliver login link to Discord:", err);
+    });
 });

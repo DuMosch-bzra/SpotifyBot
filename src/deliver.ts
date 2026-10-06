@@ -7,7 +7,7 @@ export class DiscordWebhookError extends Error {
     }
 }
 
-export async function deliverMessage(track: TopTrack) {
+export async function deliverTopTrack(track: TopTrack) {
 
     const message = {
         content: `Top Track of the last 4 weeks: **${track.name}** by **${track.artists}**`,
@@ -19,6 +19,24 @@ export async function deliverMessage(track: TopTrack) {
                 }
             }
         ]
+    };
+
+    await postMessageToDiscord(message);
+}
+
+export async function deliverLoginLink(link: string){
+    const message = {
+        content: `Please log in to Spotify by clicking the following link: ${link}`,
+        allowed_mentions: { parse: [] }
+    };
+
+    await postMessageToDiscord(message);
+}
+
+export async function deliverLoginSuccessMessage() {
+    const message = {
+        content: `Successfully logged in to Spotify!`,
+        allowed_mentions: { parse: [] }
     };
 
     await postMessageToDiscord(message);
