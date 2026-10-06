@@ -60,7 +60,7 @@ export async function refreshAccessToken() {
     const clientSecret = process.env.CLIENT_SECRET;
 
     if (!refreshToken) {
-        throw new Error("No refresh token found. Please log in first.");
+        throw new SpotifyAuthError("No refresh token found. Please log in first.");
     }
 
     if (!clientId || !clientSecret) {
