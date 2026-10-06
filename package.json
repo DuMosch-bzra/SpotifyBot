@@ -9,8 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "typecheck": "tsc --noEmit",
-    "login": "tsx --env-file=.env src/login.ts",
-    "start": "tsx --env-file=.env src/index.ts"
+    "login": "npx tsx --env-file=.env src/login.ts",
+    "start": "npx tsx --env-file=.env src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
