@@ -24,19 +24,18 @@ export async function getTopTrack(accessToken: string): Promise<TopTrack> {
         throw new Error(`HTTP error! status: ${response.status} ${await response.text()}`);
     }
     const data: TopTracksResponse = await response.json();
-    if (data.items[0] === undefined) {
+    const track = data.items[0];
+
+    if (track === undefined) {
         throw new Error("No top tracks found for the user.");
     }
-    if (!data.items[0].album.images){
-        throw new Error("No album images found for the top track.");
-    }
-    if(!data.items[0].album.images[0]){
+    if(!track.album.images[0]){
         throw new Error("No album images found for the top track.");
     }
     const topTrack = {
-        name: data.items[0].name,
-        artists: data.items[0].artists.map(artist => artist.name).join(", "),
-        albumImageUrl: data.items[0].album.images[0].url
+        name: track.name,
+        artists: track.artists.map(artist => artist.name).join(", "),
+        albumImageUrl: track.album.images[0].url
     };
     return topTrack;
 }
