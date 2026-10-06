@@ -1,5 +1,4 @@
-import type { TopTrack } from "./spotify.js";
-import type { SpotifyAuthError } from "./spotify.js";
+import type { TopTrack, SpotifyAuthError } from "./spotify.js";
 
 export class DiscordWebhookError extends Error {
     constructor(message: string) {
