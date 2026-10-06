@@ -1,4 +1,5 @@
 import type { TopTrack } from "./spotify.js";
+import type { SpotifyAuthError } from "./spotify.js";
 
 export class DiscordWebhookError extends Error {
     constructor(message: string) {
@@ -33,6 +34,14 @@ export async function deliverErrorMessage(error: unknown) {
 
     await postMessageToDiscord(message);
 
+}
+
+export async function deliverSpotifyErrorMessage(error: SpotifyAuthError) {
+    const message = {
+        content: `Spotify authentication error: ${error.message.slice(0, 300)}. Please log in again.`,
+        allowed_mentions: { parse: [] }
+    };
+    await postMessageToDiscord(message);
 }
 
 interface DiscordMessage {

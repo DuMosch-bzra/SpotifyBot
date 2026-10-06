@@ -45,6 +45,13 @@ interface TokenResponse {
     refresh_token?: string;
 }
 
+export class SpotifyAuthError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "SpotifyAuthError";
+    }
+}
+
 export async function refreshAccessToken() {
 
     const refreshToken = (await loadTokens())?.refreshToken;
@@ -75,6 +82,9 @@ export async function refreshAccessToken() {
 
     const response = await fetch('https://accounts.spotify.com/api/token', payload);
     if (!response.ok) {
+        if((await response.text()).includes("invalid_grant")){
+            throw new SpotifyAuthError("Refresh token is invalid or expired. Please log in again.");
+        }
         throw new Error(`HTTP error! status: ${response.status} ${await response.text()}`);
     }
     const data: TokenResponse = await response.json();

@@ -1,5 +1,5 @@
-import { refreshAccessToken, getTopTrack } from "./spotify.js";
-import { deliverMessage, deliverErrorMessage, DiscordWebhookError } from "./deliver.js";
+import { refreshAccessToken, getTopTrack, SpotifyAuthError } from "./spotify.js";
+import { deliverMessage, deliverErrorMessage, deliverSpotifyErrorMessage, DiscordWebhookError } from "./deliver.js";
 
 async function main() {
     try {
@@ -10,7 +10,11 @@ async function main() {
         console.error("Error:", error);
         if(!(error instanceof DiscordWebhookError)){
             try{
-                await deliverErrorMessage(error);
+                if(error instanceof SpotifyAuthError){
+                    await deliverSpotifyErrorMessage(error);
+                } else {
+                    await deliverErrorMessage(error);
+                }
             }
             catch(deliverError){
                 console.error("Failed to deliver error message to Discord:", deliverError);
