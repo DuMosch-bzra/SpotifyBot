@@ -82,10 +82,11 @@ export async function refreshAccessToken() {
 
     const response = await fetch('https://accounts.spotify.com/api/token', payload);
     if (!response.ok) {
-        if((await response.text()).includes("invalid_grant")){
+        let responseText = await response.text();
+        if(responseText.includes("invalid_grant")){
             throw new SpotifyAuthError("Refresh token is invalid or expired. Please log in again.");
         }
-        throw new Error(`HTTP error! status: ${response.status} ${await response.text()}`);
+        throw new Error(`HTTP error! status: ${response.status} ${responseText}`);
     }
     const data: TokenResponse = await response.json();
     if (data.refresh_token && data.refresh_token !== refreshToken) {
